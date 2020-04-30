@@ -20,13 +20,14 @@ void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	UE_LOG(LogTemp, Warning, TEXT("Grabber reporting for duty"));
+
 	FindPhysicsHandleComponent();
 	SetupInputComponent();
 
 }
 
 void UGrabber::Grab() {
-	UE_LOG(LogTemp, Warning, TEXT("Grab pressed"));
 
 	//LINE TRACE and see if we reach any actors with physics body collision channel set
 	FHitResult hitResult = GetFirstPhysicsBodyInReach();
@@ -36,6 +37,7 @@ void UGrabber::Grab() {
 	// If we hit something then attach a physics handle
 	if (actorHit) {
 		// Attach physics handle
+		if (!physicsHandle) { return; }
 		physicsHandle->GrabComponent(
 			componentToGrab,
 			NAME_None, //no bones needed
@@ -47,7 +49,8 @@ void UGrabber::Grab() {
 }
 
 void UGrabber::Release() {
-	UE_LOG(LogTemp, Warning, TEXT("Grab released"));
+
+	if (!physicsHandle) { return; }
 	physicsHandle->ReleaseComponent();
 }
 
@@ -82,13 +85,13 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (!physicsHandle) { return; }
 	//if the physics handle is attached
 	if (physicsHandle->GrabbedComponent) {
 
 		// move the object we're holding
 		physicsHandle->SetTargetLocation(GetReachLineEnd());
 	}
-	
 }
 
 const FHitResult UGrabber::GetFirstPhysicsBodyInReach()

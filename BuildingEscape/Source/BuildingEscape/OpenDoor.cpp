@@ -22,13 +22,12 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	myPlayer = GetWorld()->GetFirstPlayerController()->GetPawn();
-	owner = GetOwner();
-}
+	if (!pressurePlate)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s missing pressure plate"), *GetOwner()->GetName());
+	}
 
-void UOpenDoor::OpenDoor()
-{
-	owner->SetActorRotation(FRotator(0.0f, openAngle, 0.0f));
+	owner = GetOwner();
 }
 
 void UOpenDoor::CloseDoor()
@@ -44,14 +43,11 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	   
 	// Poll the Trigger Volume
 	
-	if (GetTotalMassOfActorsOnPlate() > 30.0f) {
-		OpenDoor();
-		lastDoorOpenTime = GetWorld()->GetTimeSeconds();
+	if (GetTotalMassOfActorsOnPlate() > triggerMass) {
+		OnOpen.Broadcast();
 	}
-
-	//Check if it's time to close the door
-	if (GetWorld()->GetTimeSeconds() - lastDoorOpenTime > doorCloseDelay) {
-		CloseDoor();
+	else {
+		OnClose.Broadcast();
 	}
 
 }
@@ -63,6 +59,7 @@ float UOpenDoor::GetTotalMassOfActorsOnPlate() {
 	// Find all the overlapping actors
 	TArray<AActor*> overlappingActors;
 
+	if (!pressurePlate) { return totalMass; }
 	pressurePlate->GetOverlappingActors(OUT overlappingActors);
 
 	//Iterate through them adding their masses
@@ -70,7 +67,7 @@ float UOpenDoor::GetTotalMassOfActorsOnPlate() {
 	{
 		totalMass += actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
 		UE_LOG(LogTemp, Warning, TEXT("%s on pressure plate"), *actor->GetName());
-	}
+	}	
 
 	return totalMass;
 }
