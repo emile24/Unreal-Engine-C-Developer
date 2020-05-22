@@ -4,6 +4,7 @@
 #include "TankPlayerController.h"
 #include "Blueprint/UserWidget.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Tank.h"
 
 
 ATankPlayerController::ATankPlayerController()
