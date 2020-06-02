@@ -7,7 +7,6 @@
 #include "TankAIController.generated.h"
 
 // Forward declaration
-class ATank;
 
 /**
  * 
@@ -23,13 +22,9 @@ class BATTLETANK_API ATankAIController : public AAIController
     public:
         virtual void Tick(float DeltaSeconds) override;
         
-   private:
-       ATank* GetControlledTank() const;
-       ATank* GetPlayerTank() const;
-
-       //void AimTowardsPlayer() const;
-
     private:
-        ATank* ControlledTank;
-        ATank* PlayerTank;
+
+        // How close can the AI Tank get
+        float AcceptanceRadius = 3000.f;
+
 };

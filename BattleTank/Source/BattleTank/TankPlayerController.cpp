@@ -2,33 +2,24 @@
 
 
 #include "TankPlayerController.h"
-#include "Blueprint/UserWidget.h"
-#include "UObject/ConstructorHelpers.h"
-#include "Tank.h"
+#include "TankAimingComponent.h"
 
 
 ATankPlayerController::ATankPlayerController()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
-	ConstructorHelpers::FClassFinder<UPlayerUI> PlayerUIClassFinder(TEXT("/Game/UI/PlayerUI_BP"));
-	PlayerUIClass = PlayerUIClassFinder.Class;
 }
 
 void ATankPlayerController::BeginPlay() {
 
 	Super::BeginPlay();
 
-	PlayerUI = CreateWidget<UPlayerUI>(this, PlayerUIClass);
-	PlayerUI->AddToViewport();
+	auto AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
 
-	ControlledTank = GetControlledTank();
-	if (!ControlledTank) {
-		UE_LOG(LogTemp, Warning, TEXT("PlayerController not possesing a tank"));
-	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("PlayerController possesing %s"), *(ControlledTank->GetName()));
-	}	
+	/*if (ensure(AimingComponent)) {
+		FoundAimingComponent(AimingComponent);
+	}*/
+
 }
 
 // Called every frame
@@ -38,20 +29,16 @@ void ATankPlayerController::Tick(float DeltaTime)
 	AimTowardsCrosshair();
 }
 
-ATank* ATankPlayerController::GetControlledTank() const
-{
-	return Cast<ATank>(GetPawn());
-}
-
 void ATankPlayerController::AimTowardsCrosshair() 
 {
-	if (!ControlledTank) { return; }
+	auto AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
+	if (!ensure(AimingComponent)) { return; }
 
 	FVector HitLocation; // OUT pamameter
 		
 	// Can also use GetHitResultAtScreenPosition()
 	if (GetSightRayHitLocation(HitLocation)) {
-		ControlledTank->AimAt(HitLocation);
+		AimingComponent->AimAt(HitLocation);
 	}
 }
 
@@ -85,7 +72,7 @@ bool ATankPlayerController::GetLookVectorHitLocation(FVector LookDirection, FVec
 	FVector StartLocation = PlayerCameraManager->GetCameraLocation();
 	FVector EndLocation = StartLocation + LookDirection * LineTraceRange;
 	FCollisionQueryParams query = FCollisionQueryParams::DefaultQueryParam;
-	query.AddIgnoredActor(ControlledTank);
+	query.AddIgnoredActor(GetPawn());
 
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECollisionChannel::ECC_Visibility, query)) {
 		HitLocation = HitResult.Location;

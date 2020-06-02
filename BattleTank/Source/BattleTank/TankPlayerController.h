@@ -7,10 +7,10 @@
 #include "PlayerUI.h"
 #include "TankPlayerController.generated.h"
 
-class ATank;
+class UTankAimingComponent;
 
 /**
- * 
+ * Responsible for helping the player control the tank
  */
 UCLASS()
 class BATTLETANK_API ATankPlayerController : public APlayerController
@@ -23,11 +23,13 @@ class BATTLETANK_API ATankPlayerController : public APlayerController
 	protected:
 		virtual void BeginPlay() override;
 
+		UFUNCTION(BlueprintImplementableEvent, Category = "Setup")
+		void FoundAimingComponent(UTankAimingComponent* AimingComponent);
+
 	public:
 		virtual void Tick(float DeltaSeconds) override;
 	
 	public:
-		ATank* GetControlledTank() const;
 
 	private:
 		//StartThe tnak moving the barrel so that a shot would hit where
@@ -43,18 +45,14 @@ class BATTLETANK_API ATankPlayerController : public APlayerController
 
 
 	private:
-		TSubclassOf<class UUserWidget> PlayerUIClass;
-		class UPlayerUI* PlayerUI;
 
-		ATank* ControlledTank;
-
-		UPROPERTY(EditAnywhere)
+		UPROPERTY(EditDefaultsOnly)
 		float CrossHairXLocation = 0.5f;
 
-		UPROPERTY(EditAnywhere)
+		UPROPERTY(EditDefaultsOnly)
 		float CrossHairYLocation = 0.33333f;
 
-		UPROPERTY(EditAnywhere)
+		UPROPERTY(EditDefaultsOnly)
 		float LineTraceRange = 1000000.f;
 
 };

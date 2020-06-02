@@ -4,12 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "Components/StaticMeshComponent.h"
 #include "Tank.generated.h"
 
 // Forward declaration
-class UTankBarrel;
-class UTankAimingComponent;
 
 UCLASS()
 class BATTLETANK_API ATank : public APawn
@@ -31,16 +28,9 @@ public:
 
 public:
 
-	UFUNCTION(BlueprintCallable, Category = Setup)
-	void SetBarrel(UTankBarrel* Barrel);
-
-	void AimAt(FVector HitLocation);
-
 protected:
-	UTankAimingComponent* TankAimingComponent = nullptr;
 
 private:
-	UPROPERTY(EditAnywhere, Category = Firing)
-	float FireLaunchSpeed = 100000.f; // TODO find sensible default
+
 
 };

@@ -5,8 +5,7 @@
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 
+
 bool UPlayerUI::Initialize() {
-	
-	Super::Initialize();	
-	return true;
+	return Super::Initialize();
 }

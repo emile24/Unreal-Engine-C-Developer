@@ -11,6 +11,11 @@
 
 #include "PlayerUI.generated.h"
 
+class UCanvasPanel;
+class UImage;
+class UButton;
+class UTankAimingComponent;
+
 /**
  * 
  */
@@ -19,13 +24,18 @@ class BATTLETANK_API UPlayerUI : public UUserWidget
 {
 	GENERATED_BODY()
 
-protected:
+
+public:
     virtual bool Initialize() override;
 
-private:
-    UPROPERTY(meta = (BindWidget))
-        class UCanvasPanel* Panel;
-    UPROPERTY(meta = (BindWidget))
-        class UImage* AimPoint;
+public:
+    UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+    UCanvasPanel* Panel;
+    UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+    UImage* AimPoint;
+    UPROPERTY(EditAnywhere, meta = (BindWidget))
+    UButton* Button1;
+    UPROPERTY(EditDefaultsOnly)
+    UTankAimingComponent* TankAimingComponent;
 	
 };
