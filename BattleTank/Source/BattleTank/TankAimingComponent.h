@@ -32,15 +32,25 @@ public:
 
 public:
 
+	virtual void BeginPlay() override;
+
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void Initialize(UTankBarrel* Barrel, UTankTurret* Turret);
 
 	void AimAt(FVector WorldLocation);
 
-	void MoveBarrelTowards(FVector AimDirection);
+	void MoveBarrelTowards();
 
 	UFUNCTION(BlueprintCallable, Category = "Firing")
 	void Fire();
+
+	bool IsBarrelMoving();
+
+protected:
+	UPROPERTY(BlueprintReadWrite, Category = "Setup")
+	TSubclassOf<AProjectile> ProjectileBlueprint;
 
 private:
 
@@ -50,8 +60,7 @@ private:
 	UTankBarrel* Barrel = nullptr;
 	UTankTurret* Turret = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	TSubclassOf<AProjectile> ProjectileBlueprint;
+
 
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	float ReloadTimeInSeconds = 3.f;
@@ -60,5 +69,6 @@ private:
 	float FireLaunchSpeed = 4000.f;
 
 	double LastFireTime = 0;
+	FVector AimDirection;
 		
 };
